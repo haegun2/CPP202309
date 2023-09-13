@@ -18,3 +18,5 @@ int main()
 
 	cout << "최대로 살 수 있는 캔디=" << sum1 << endl;
 	cout << "캔디 구입 후 남은 돈=" << sum2 << endl;
+
+}
