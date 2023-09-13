@@ -4,14 +4,17 @@ using namespace std;
 
 int main()
 {
-	string money;
-	string cost;
-	cout << "ÇöÀç °¡Áö°í ÀÖ´Â µ·:" << endl;
+	int money;
+	int cost;
+	int sum1;
+	int sum2;
+	cout << "í˜„ìž¬ ê°€ì§€ê³  ìžˆëŠ” ëˆ:";
 	cin >> money;
-	cout << "ÄµµðÀÇ °¡°Ý" << endl;
+	cout << "ìº”ë””ì˜ ê°€ê²©:";
 	cin >> cost;
-	cout << "ÃÖ´ë·Î »ì ¼ö ÀÖ´Â Äµµð=" << money / cost << endl;
-	cout << "Äµµð ±¸ÀÔ ÈÄ ³²Àº µ·=" << money // cost << endl;
 
-		return 0;
-}
+	sum1 = money / cost;
+	sum2 = money % cost;
+
+	cout << "ìµœëŒ€ë¡œ ì‚´ ìˆ˜ ìžˆëŠ” ìº”ë””=" << sum1 << endl;
+	cout << "ìº”ë”” êµ¬ìž… í›„ ë‚¨ì€ ëˆ=" << sum2 << endl;
