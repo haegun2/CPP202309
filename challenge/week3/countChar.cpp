@@ -5,12 +5,12 @@ int main()
 {
 	int vowel = 0;
 	int consonant = 0;
-	cout << "¿µ¹®ÀÚ¸¦ ÀÔ·ÂÇÏ°í ctrl+z¸¦ Ä¡¼¼¿ä" << endl;
+	cout << "ì˜ë¬¸ìë¥¼ ì…ë ¥í•˜ê³  ctrl+zë¥¼ ì¹˜ì„¸ìš”" << endl;
 
 	char ch;
 
-	while (cin >> ch) {//ÀÔ·ÂÀÌ °è¼Ó ÁøÇàµÊ
-		switch (ch) {//±×Áß ¸ğÀ½µéÀº vowelÀÇ ¼ıÀÚ¸¦ 1¾¿ Áõ°¡
+	while (cin >> ch) {//ì…ë ¥ì´ ê³„ì† ì§„í–‰ë¨
+		switch (ch) {//ê·¸ì¤‘ ëª¨ìŒë“¤ì€ vowelì˜ ìˆ«ìë¥¼ 1ì”© ì¦ê°€
 		case 'a':
 			vowel++;
 			break;
@@ -26,18 +26,14 @@ int main()
 		case 'e':
 			vowel++;
 			break;
-		default: //±× ¿Ü´Â ÀÚÀ½À» 1¾¿ Áõ°¡
+		default: //ê·¸ ì™¸ëŠ” ììŒì„ 1ì”© ì¦ê°€
 			consonant++;
 			break;
 		}
-
-		if (ch == '^ Z') // ÄÁÆ®·Ñ z¸¦ ÇÏ¸é ¹İº¹¹® Å»Ãâ
-			break;
-
 	}
 
-	cout << "¸ğÀ½: " << vowel << endl;
-	cout << "ÀÚÀ½: " << consonant << endl;
+	cout << "ëª¨ìŒ: " << vowel << endl;
+	cout << "ììŒ: " << consonant << endl;
 
 	return 0;
 }
