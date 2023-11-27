@@ -1,40 +1,29 @@
 #include "user.h"
-
 using namespace std;
 
-//맵 크기를 상수로 정의
 const int mapX = 5;
 const int mapY = 5;
 
-int turn = 0; //누구 차례인지 나타내기 위한 변수
-char current_user = 'M'; //누가 움직이고 있는지 나타내기 위한 변수 (M과 W)
+int map[mapY][mapX] = { {0, 1, 2, 0, 4}, // 0빈칸, 1아이템, 2적, 3포션, 4목적지
+						{1, 0, 0, 2, 0},
+						{0, 0, 0, 0, 0},
+						{0, 2, 3, 0, 0},
+						{3, 0, 0, 0, 2} };
 
-// 사용자 정의 함수 : 함수원형을 선언
+int turn = 0; //누구 차례인지 변수
+char current_user = 'M'; //선턴 m 고정. 유저는 m과 w
+
+//함수원형
 bool CheckXY(int user_x, int mapX, int user_y, int mapY);
-void DisplayMap(int map[][mapX], int user_x, int user_y);
+void DisplayMap(int map[][mapX], int a1, int a2, int b1, int b2);
 bool CheckGoal(int map[][mapX], int user_x, int user_y);
 void CheckState(int map[][mapX], int user_x, int user_y, User& check);
 bool CheckUser(User check);
 
-// 메인  함수
+
 int main() {
 	Magician magi{};//(마법사 유저 M 선턴)
 	Warrior warr{};//(전사 유저 w 후턴)
-
-	// 0은 빈 공간, 1은 아이템, 2는 적, 3은 포션, 4는 목적지
-	int map[mapY][mapX] = { {0, 1, 2, 0, 4},
-							{1, 0, 0, 2, 0},
-							{0, 0, 0, 0, 0},
-							{0, 2, 3, 0, 0},
-							{3, 0, 0, 0, 2} };
-
-
-	// 유저의 위치를 저장할 변수
-	int magi_x = 0; // 법사 가로 번호
-	int magi_y = 0; // 법사 세로 번호
-	int warr_x = 0; // 전사 가로 번호
-	int warr_y = 0; // 전사 세로 번호
-
 
 	// 게임 시작 
 	while (1) { // 사용자에게 계속 입력받기 위해 무한 루프
@@ -47,7 +36,7 @@ int main() {
 			current_user = 'W';
 			break;
 		}
-		cout << turn % 3 + 1 << "번 유저(" << current_user << ")의 차례입니다. -> ";
+		cout << turn % 2 + 1 << "번 유저(" << current_user << ")의 차례입니다. -> ";
 
 		// 사용자의 입력을 저장할 변수
 		string user_input = "";
@@ -55,99 +44,113 @@ int main() {
 		cout << "명령어를 입력하세요 (상,하,좌,우,지도,종료): ";
 		cin >> user_input;
 
-		if (current_user = 'M') {
+		if (current_user == 'M') {
+
+			// 목적지에 도달했는지 체크
+			bool finishm1 = CheckGoal(map, magi.x, magi.y);
+			if (finishm1 == true) {
+				cout << "플래이어는 목적지에 도착한 상태입니다!" << endl;
+				cout << "턴을 종료합니다." << endl;
+				turn++;
+				DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
+				continue;
+			}
 
 			if (user_input == "상") {
 				// 위로 한 칸 올라가기
-				magi_y -= 1;
-				bool inMap = CheckXY(magi_x, mapX, magi_y, mapY);
+				magi.y -= 1;
+				bool inMap = CheckXY(magi.x, mapX, magi.y, mapY);
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					magi_y += 1;
+					magi.y += 1;
 				}
 				else {
 					cout << "위로 한 칸 올라갑니다." << endl;
-					DisplayMap(map, magi_x, magi_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					magi.DecreaseHP(1);
-					CheckState(map, magi_x, magi_y, magi);
+					CheckState(map, magi.x, magi.y, magi);
 					if (CheckUser(magi) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << magi.GetHP() << "  ";
+					cout << current_user<<"의 현재 HP : " << magi.GetHP() << endl;
+					turn++;
 				}
 			}
 
 			else if (user_input == "하") {
 				// TODO: 아래로 한 칸 내려가기
-				magi_y += 1;
-				bool inMap = CheckXY(magi_x, mapX, magi_y, mapY);
+				magi.y += 1;
+				bool inMap = CheckXY(magi.x, mapX, magi.y, mapY);
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					magi_y -= 1;
+					magi.y -= 1;
 				}
 				else {
 					cout << "위로 한 칸 내려갑니다." << endl;
-					DisplayMap(map, magi_x, magi_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					magi.DecreaseHP(1);
-					CheckState(map, magi_x, magi_y, magi);
+					CheckState(map, magi.x, magi.y, magi);
 					if (CheckUser(magi) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << magi.GetHP() << "  ";
+					cout << current_user << "의 현재 HP : " << magi.GetHP() << endl;
+					turn++;
 				}
 			}
 			else if (user_input == "좌") {
 				// TODO: 왼쪽으로 이동하기
-				magi_x -= 1;
-				bool inMap = CheckXY(magi_x, mapX, magi_y, mapY);
+				magi.x -= 1;
+				bool inMap = CheckXY(magi.x, mapX, magi.y, mapY);
 
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					magi_x += 1;
+					magi.x += 1;
 				}
 				else {
 					cout << "왼쪽으로 이동합니다." << endl;
-					DisplayMap(map, magi_x, magi_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					magi.DecreaseHP(1);
-					CheckState(map, magi_x, magi_y, magi);
+					CheckState(map, magi.x, magi.y, magi);
 					if (CheckUser(magi) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << magi.GetHP() << "  ";
+					cout << current_user << "의 현재 HP : " << magi.GetHP() << endl;
+					turn++;
 				}
 			}
 			else if (user_input == "우") {
 				// TODO: 오른쪽으로 이동하기
-				magi_x += 1;
-				bool inMap = CheckXY(magi_x, mapX, magi_y, mapY);
+				magi.x += 1;
+				bool inMap = CheckXY(magi.x, mapX, magi.y, mapY);
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					magi_x -= 1;
+					magi.x -= 1;
 				}
 				else {
 					cout << "오른쪽으로 이동합니다." << endl;
-					DisplayMap(map, magi_x, magi_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					magi.DecreaseHP(1);
-					CheckState(map, magi_x, magi_y, magi);
+					CheckState(map, magi.x, magi.y, magi);
 					if (CheckUser(magi) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << magi.GetHP() << "  ";
+					cout << current_user << "의 현재 HP : " << magi.GetHP() << endl;
+					turn++;
 				}
 			}
 
 			else if (user_input == "지도") {
 				// TODO: 지도 보여주기 함수 호출
-				DisplayMap(map, magi_x, magi_y);
-				cout << "현재 HP : " << magi.GetHP() << "  ";
+				DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
+				cout << current_user << "의 현재 HP : " << magi.GetHP() << endl;
 			}
 			else if (user_input == "종료") {
 				cout << "종료합니다.";
@@ -159,107 +162,122 @@ int main() {
 			}
 
 			// 목적지에 도달했는지 체크
-			bool finish = CheckGoal(map, magi_x, magi_y);
-			if (finish == true) {
-				cout << "목적지에 도착했습니다! 축하합니다!" << endl;
-				cout << "게임을 종료합니다." << endl;
-				break;
+			bool finishm2 = CheckGoal(map, magi.x, magi.y);
+			if (finishm2 == true) {
+				cout << "플래이어는 목적지에 도착한 상태입니다!" << endl;
+				cout << "턴을 종료합니다." << endl;
+				turn++;
+				DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
+				continue;
 			}
 		}
 
-		if (current_user = 'W') {
+		if (current_user == 'W') {
 
+			bool finishw1 = CheckGoal(map, warr.x, warr.y);
+			if (finishw1 == true) {
+				cout << "목적지에 도착했습니다! 축하합니다!" << endl;
+				cout << "게임을 종료합니다." << endl;
+				turn++;
+				DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
+				continue;
+			}
+		
 			if (user_input == "상") {
 				// 위로 한 칸 올라가기
-				warr_y -= 1;
-				bool inMap = CheckXY(warr_x, mapX, warr_y, mapY);
+				warr.y -= 1;
+				bool inMap = CheckXY(warr.x, mapX, warr.y, mapY);
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					warr_y += 1;
+					warr.y += 1;
 				}
 				else {
 					cout << "위로 한 칸 올라갑니다." << endl;
-					DisplayMap(map, warr_x, warr_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					warr.DecreaseHP(1);
-					CheckState(map, warr_x, warr_y, warr);
+					CheckState(map, warr.x, warr.y, warr);
 					if (CheckUser(warr) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << warr.GetHP() << "  ";
+					cout << current_user << "의 현재 HP : " << warr.GetHP() << endl;
+					turn++;
 				}
 			}
 
 			else if (user_input == "하") {
 				// TODO: 아래로 한 칸 내려가기
-				warr_y += 1;
-				bool inMap = CheckXY(warr_x, mapX, warr_y, mapY);
+				warr.y += 1;
+				bool inMap = CheckXY(warr.x, mapX, warr.y, mapY);
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					warr_y -= 1;
+					warr.y -= 1;
 				}
 				else {
 					cout << "위로 한 칸 내려갑니다." << endl;
-					DisplayMap(map, warr_x, warr_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					warr.DecreaseHP(1);
-					CheckState(map, warr_x, warr_y, warr);
+					CheckState(map, warr.x, warr.y, warr);
 					if (CheckUser(warr) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << warr.GetHP() << "  ";
+					cout << current_user << "의 현재 HP : " << warr.GetHP() << endl;
+					turn++;
 				}
 			}
 			else if (user_input == "좌") {
 				// TODO: 왼쪽으로 이동하기
-				warr_x -= 1;
-				bool inMap = CheckXY(warr_x, mapX, warr_y, mapY);
+				warr.x -= 1;
+				bool inMap = CheckXY(warr.x, mapX, warr.y, mapY);
 
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					warr_x += 1;
+					warr.x += 1;
 				}
 				else {
 					cout << "왼쪽으로 이동합니다." << endl;
-					DisplayMap(map, warr_x, warr_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					warr.DecreaseHP(1);
-					CheckState(map, warr_x, warr_y, warr);
+					CheckState(map, warr.x, warr.y, warr);
 					if (CheckUser(warr) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << warr.GetHP() << "  ";
+					cout << current_user << "의 현재 HP : " << warr.GetHP() << endl;
+					turn++;
 				}
 			}
 			else if (user_input == "우") {
 				// TODO: 오른쪽으로 이동하기
-				warr_x += 1;
-				bool inMap = CheckXY(warr_x, mapX, warr_y, mapY);
+				warr.x += 1;
+				bool inMap = CheckXY(warr.x, mapX, warr.y, mapY);
 				if (inMap == false) {
 					cout << "맵을 벗어났습니다. 다시 돌아갑니다." << endl;
-					warr_x -= 1;
+					warr.x -= 1;
 				}
 				else {
 					cout << "오른쪽으로 이동합니다." << endl;
-					DisplayMap(map, warr_x, warr_y);
+					DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
 					warr.DecreaseHP(1);
-					CheckState(map, warr_x, warr_y, warr);
+					CheckState(map, warr.x, warr.y, warr);
 					if (CheckUser(warr) == false) {
 						cout << "HP가 0 이하가 되었습니다. 실패했습니다." << endl;
 						cout << "게임을 종료합니다." << endl;
 						break;
 					}
-					cout << "현재 HP : " << warr.GetHP() << "  ";
+					cout << current_user << "의 현재 HP : " << warr.GetHP() << endl;
+					turn++;
 				}
 			}
 
 			else if (user_input == "지도") {
 				// TODO: 지도 보여주기 함수 호출
-				DisplayMap(map, warr_x, warr_y);
-				cout << "현재 HP : " << warr.GetHP() << "  ";
+				DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
+				cout << current_user << "의 현재 HP : " << warr.GetHP() << endl;
 			}
 			else if (user_input == "종료") {
 				cout << "종료합니다.";
@@ -271,11 +289,13 @@ int main() {
 			}
 
 			// 목적지에 도달했는지 체크
-			bool finish = CheckGoal(map, warr_x, warr_y);
-			if (finish == true) {
+			bool finishw2 = CheckGoal(map, warr.x, warr.y);
+			if (finishw2 == true) {
 				cout << "목적지에 도착했습니다! 축하합니다!" << endl;
 				cout << "게임을 종료합니다." << endl;
-				break;
+				turn++;
+				DisplayMap(map, magi.x, magi.y, warr.x, warr.y);
+				continue;
 			}
 		}
 	
@@ -283,13 +303,14 @@ int main() {
 	return 0;
 }
 
+
 // 지도와 사용자 위치 출력하는 함수
-void DisplayMap(int map[][mapX], int user_x, int user_y) {
+void DisplayMap(int map[][mapX], int a1, int a2, int b1, int b2) {
 	for (int i = 0; i < mapY; i++) {
 		for (int j = 0; j < mapX; j++) {
-			if (i == user_y && j == user_x) {
-				cout << " USER |"; // 양 옆 1칸 공백
-			}
+			if (i == a2 && j == a1 && i == b2 && j == b1) { cout << " M & W|"; }
+			else if (i == a2 && j == a1) {cout << " Magi |";}
+			else if (i == b2 && j == b1) {cout << " Warr |";}
 			else {
 				int posState = map[i][j];
 				switch (posState) {

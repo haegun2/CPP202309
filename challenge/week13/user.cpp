@@ -14,13 +14,13 @@ int User::GetHP() {
 }
 
 void User::DoAttack() {
-	cout << "공격합니다" << endl;
+	std::cout << "공격합니다" << endl;
 }
 
 void Magician::DoAttack() {
-	cout << "마법 사용" << endl;
+	std::cout << "마법 사용" << endl;
 }
 
 void Warrior::DoAttack(){
-	cout << "베기 사용" << endl;
+	std::cout << "베기 사용" << endl;
 }

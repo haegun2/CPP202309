@@ -9,7 +9,8 @@ private:
 	int hp;
 
 public:
-	User() { hp = 20; }
+	int x, y;
+	User() { hp = 20, x = 0, y = 0; }
 	void DecreaseHP(int dec_hp);
 	void IncreaseHP(int inc_hp);
 	
